@@ -5,4 +5,4 @@
 * [ ] A cleaner UX interface
 * [ ] Better Theme (PureRef reference)
 * [ ] Infinite Canvas
-* [ ] Maybe a command moed like in nvim for some command
+* [ ] Maybe a command mode like in nvim for some commands
