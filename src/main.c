@@ -5,6 +5,28 @@
 #include "protocol.h"
 #include <stdlib.h>
 
+#define PALETTE_SIZE 8
+const Color PALETTE[PALETTE_SIZE] = {
+		BLACK, RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, BROWN
+};
+
+void DrawPalette(State *state) {
+		int startX = 10;
+		int startY = WINDOW_HEIGHT - 40;
+		int boxSize = 30;
+
+		for (int i = 0; i < PALETTE_SIZE; i++) {
+				Rectangle rect = { startX + (i * (boxSize+5)), startY, boxSize, boxSize};
+				DrawRectangleRec(rect, PALETTE[i]);
+
+				// Highlight Selected color
+				if (ColorToInt(state->currentColor) == ColorToInt(PALETTE[i])) {
+						DrawRectangleLinesEx(rect, 3, WHITE);
+						DrawRectangleLinesEx((Rectangle){rect.x-2, rect.y-2, rect.width+4, rect.height+4}, 2, BLACK);
+				}
+		}
+}
+
 char* getTool(ToolType tool) {
     switch (tool) {
         case TOOL_PEN: return "Pen";
@@ -32,17 +54,41 @@ int main(void) {
         
         // Input Handling
 
+        // Toggle Palette visibility
+        if (IsKeyPressed(KEY_TAB)) state.isPaletteVisible = !state.isPaletteVisible;
+
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            state.isMouseDown = true;
-            state.lastMousePos = mousePos;
-            state.startMousePos = mousePos;
+
+            bool paletteClicked = false;
             
-            // Draw initial point for Pen/Eraser
-            if (state.currTool == TOOL_PEN || state.currTool == TOOL_ERASER) {
-                 // Determine color
-                 bool modeEraser = state.currTool == TOOL_ERASER || IsKeyDown(KEY_LEFT_SHIFT);
-                 Color colorToUse = modeEraser ? RAYWHITE : state.currentColor;
-                 DrawLineToBuffer(&state, (int)mousePos.x, (int)mousePos.y, (int)mousePos.x, (int)mousePos.y, colorToUse);
+            if (state.isPaletteVisible) {
+                int startX = 10;
+                int startY = WINDOW_HEIGHT - 40;
+                int boxSize = 30;
+
+                for (int i = 0; i < PALETTE_SIZE; i++) {
+                    Rectangle rect = { startX + (i * (boxSize+5)), startY, boxSize, boxSize};
+                    if (CheckCollisionPointRec(mousePos, rect)) {
+                        state.currentColor = PALETTE[i];
+                        state.currTool = TOOL_PEN;
+                        paletteClicked = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!paletteClicked) {
+                state.isMouseDown = true;
+                state.lastMousePos = mousePos;
+                state.startMousePos = mousePos;
+                
+                // Draw initial point for Pen/Eraser
+                if (state.currTool == TOOL_PEN || state.currTool == TOOL_ERASER) {
+                        // Determine color
+                        bool modeEraser = state.currTool == TOOL_ERASER || IsKeyDown(KEY_LEFT_SHIFT);
+                        Color colorToUse = modeEraser ? RAYWHITE : state.currentColor;
+                        DrawLineToBuffer(&state, (int)mousePos.x, (int)mousePos.y, (int)mousePos.x, (int)mousePos.y, colorToUse);
+                }
             }
 
         } else if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
@@ -120,6 +166,7 @@ int main(void) {
         BeginDrawing();
             ClearBackground(RAYWHITE);
             DrawTexture(state.targetTexture, 0, 0, WHITE);
+            if (state.isPaletteVisible) DrawPalette(&state);
             DrawText(TextFormat("Brush Size: %d", state.brushSize), 10, 10, 20, DARKGRAY);
             DrawText("Hold Left Mouse to Draw", 10, 30, 20, DARKGRAY);
             DrawText(TextFormat("Tool: %s", getTool(state.currTool)), 10, 50, 20, DARKGRAY);

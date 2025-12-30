@@ -6,6 +6,7 @@ A (real-time collaborative)* drawing application written in C using Raylib.
 - **Pixel-perfect drawing**: Uses Bresenham's algorithm for smooth strokes.
 - **Tools**: Pen, Eraser, Line, Rectangle, Circle.
 - **Variable Brush Size**: Adjust thickness on the fly.
+- **Various Color options**: Chose the color of the pen among the given palette.
 - **Modular Architecture**: Clean separation of state, canvas, drawing, and protocols.
 
 ## Controls
@@ -20,6 +21,7 @@ A (real-time collaborative)* drawing application written in C using Raylib.
 | **`R`** | Rectangle Tool |
 | **`C`** | Circle Tool |
 | **`X`** | Clear Canvas |
+| **`TAB`** | Toggle Color Palette |
 | **`Shift` (Hold)** | Temporary Eraser |
 
 ## Building and Running

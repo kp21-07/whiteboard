@@ -37,6 +37,7 @@ typedef struct State {
     Color currentColor;
     int brushSize;
     ToolType currTool;
+    bool isPaletteVisible;
 } State;
 
 #endif
