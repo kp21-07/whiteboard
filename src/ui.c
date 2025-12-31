@@ -54,6 +54,9 @@ void DrawUI(State *state) {
     DrawText(TextFormat("Brush Size: %d", state->brushSize), 10, 10, 20, DARKGRAY);
     DrawText("Hold Left Mouse to Draw", 10, 30, 20, DARKGRAY);
     DrawText(TextFormat("Tool: %s", GetToolName(state->currTool)), 10, 50, 20, DARKGRAY);
+    if (state->currTool != TOOL_PEN && state->currTool != TOOL_ERASER && state->currTool != TOOL_LINE) {
+        DrawText(TextFormat("Filled: %s", state->isFilled ? "Yes" : "No"), 10, 70, 20, DARKGRAY);
+    }
 }
 
 bool HandlePaletteClick(Vector2 mousePos, bool isVisible, Color *pickedColor) {
@@ -88,12 +91,14 @@ void DrawShapePreview(State *state) {
             int y = (int)fminf(start.y, curr.y);
             int width = (int)fabsf(start.x - curr.x);
             int height = (int)fabsf(start.y - curr.y);
-            DrawRectangleLinesEx((Rectangle){x, y, width, height}, state->brushSize, previewColor);
+            if (state->isFilled) DrawRectangle(x, y, width, height, previewColor);
+            else DrawRectangleLinesEx((Rectangle){x, y, width, height}, state->brushSize, previewColor);
             break;
         case TOOL_CIRCLE:
             float radius = Vector2Distance(start, curr) / 2.0f;
             Vector2 center = { (start.x + curr.x) / 2.0f, (start.y + curr.y) / 2.0f };
-            DrawCircleLines((int)center.x, (int)center.y, radius, previewColor);
+            if (state->isFilled) DrawCircle((int)center.x, (int)center.y, radius, previewColor);
+            else DrawCircleLines((int)center.x, (int)center.y, radius, previewColor);
             break;
         default:
             break;

@@ -15,6 +15,7 @@ int main(void) {
     state.currentColor = RED;
     state.brushSize = 5;
     state.currTool = TOOL_PEN;
+    state.isFilled = false;
 
     while (!WindowShouldClose()) {
         HandleInput(&state);

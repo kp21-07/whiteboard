@@ -7,6 +7,9 @@
 void HandleInput(State *state) {
     Vector2 mousePos = GetMousePosition();
 
+    // Toggle isFilled
+    if (IsKeyPressed(KEY_F)) state->isFilled = !state->isFilled;
+
     // Toggle Palette visibility
     if (IsKeyPressed(KEY_TAB)) state->isPaletteVisible = !state->isPaletteVisible;
 
