@@ -21,8 +21,8 @@ int main(void) {
         HandleInput(&state);
 
         BeginDrawing();
-            ClearBackground(RAYWHITE);
-            DrawTexture(state.targetTexture, 0, 0, WHITE);
+            ClearBackground(BG_COLOR);
+            DrawTexture(state.targetTexture, 0, 0, BG_COLOR);
             DrawShapePreview(&state);
             DrawUI(&state);
         EndDrawing();

@@ -39,7 +39,17 @@ static void DrawPalette(State *state) {
 }
 
 void DrawUI(State *state) {
-    DrawText("Color: ", 10, WINDOW_HEIGHT - 30, 20, DARKGRAY);
+    DrawText(TextFormat("Brush Size: %d", state->brushSize), 10, 10, 20, TEXT_COLOR);
+
+    DrawText("Hold Left Mouse to Draw", 10, 30, 20, TEXT_COLOR);
+
+    DrawText(TextFormat("Tool: %s", GetToolName(state->currTool)), 10, 50, 20, TEXT_COLOR);
+
+    if (state->currTool != TOOL_PEN && state->currTool != TOOL_ERASER && state->currTool != TOOL_LINE) {
+        DrawText(TextFormat("Filled: %s", state->isFilled ? "Yes" : "No"), 10, 70, 20, TEXT_COLOR);
+    }
+
+		DrawText("Color: ", 10, WINDOW_HEIGHT - 30, 20, TEXT_COLOR);
     
     if (state->isPaletteVisible) {
         DrawPalette(state);
@@ -49,13 +59,6 @@ void DrawUI(State *state) {
         Rectangle rect = { START_X, startY, BOX_SIZE, BOX_SIZE };
         DrawRectangleRec(rect, state->currentColor);
         DrawRectangleLinesEx(rect, 2, BLACK);
-    }
-
-    DrawText(TextFormat("Brush Size: %d", state->brushSize), 10, 10, 20, DARKGRAY);
-    DrawText("Hold Left Mouse to Draw", 10, 30, 20, DARKGRAY);
-    DrawText(TextFormat("Tool: %s", GetToolName(state->currTool)), 10, 50, 20, DARKGRAY);
-    if (state->currTool != TOOL_PEN && state->currTool != TOOL_ERASER && state->currTool != TOOL_LINE) {
-        DrawText(TextFormat("Filled: %s", state->isFilled ? "Yes" : "No"), 10, 70, 20, DARKGRAY);
     }
 }
 

@@ -63,7 +63,7 @@ void HandleInput(State *state) {
         // Draw initial point for Pen/Eraser
         if (state->currTool == TOOL_PEN || state->currTool == TOOL_ERASER) {
             bool modeEraser = state->currTool == TOOL_ERASER || IsKeyDown(KEY_LEFT_SHIFT);
-            Color colorToUse = modeEraser ? RAYWHITE : state->currentColor;
+            Color colorToUse = modeEraser ? BG_COLOR : state->currentColor;
             DrawLineToBuffer(state, (int)mousePos.x, (int)mousePos.y, (int)mousePos.x, (int)mousePos.y, colorToUse);
         }
 

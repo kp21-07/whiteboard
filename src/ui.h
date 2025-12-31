@@ -3,6 +3,9 @@
 
 #include "state.h"
 
+#define TEXT_COLOR DARKGRAY
+#define BG_COLOR   RAYWHITE
+
 // Draws all UI elements (palette, text, status)
 void DrawUI(State *state);
 
