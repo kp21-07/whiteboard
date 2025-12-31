@@ -2,19 +2,26 @@ CC = gcc
 CFLAGS = -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces
 LDFLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
-SRC = src/protocol.c src/canvas.c src/drawing.c src/main.c 
-OBJ = $(SRC:.c=.o)
+SRC_DIR = src
+BUILD_DIR = build
+
+# List source files explicitly or use wildcard
+SRC = $(wildcard $(SRC_DIR)/*.c)
+OBJ = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SRC))
 TARGET = whiteboard
 
-all: $(TARGET)
+all: $(BUILD_DIR) $(TARGET)
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
 
 $(TARGET): $(OBJ)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
-%.o: %.c
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) -c $< -o $@ $(CFLAGS) -MMD -MP
 
--include src/*.d
+-include $(OBJ:.o=.d)
 
 clean:
-	rm -f src/*.o $(TARGET)
+	rm -rf $(BUILD_DIR) $(TARGET) src/*.o src/*.d

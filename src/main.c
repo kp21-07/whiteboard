@@ -1,42 +1,9 @@
 #include "raylib.h"
 #include "state.h"
 #include "canvas.h"
-#include "drawing.h"
-#include "protocol.h"
+#include "input.h"
+#include "ui.h"
 #include <stdlib.h>
-
-#define PALETTE_SIZE 8
-const Color PALETTE[PALETTE_SIZE] = {
-		BLACK, RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, BROWN
-};
-
-void DrawPalette(State *state) {
-		int startX = 10;
-		int startY = WINDOW_HEIGHT - 40;
-		int boxSize = 30;
-
-		for (int i = 0; i < PALETTE_SIZE; i++) {
-				Rectangle rect = { startX + (i * (boxSize+5)), startY, boxSize, boxSize};
-				DrawRectangleRec(rect, PALETTE[i]);
-
-				// Highlight Selected color
-				if (ColorToInt(state->currentColor) == ColorToInt(PALETTE[i])) {
-						DrawRectangleLinesEx(rect, 3, WHITE);
-						DrawRectangleLinesEx((Rectangle){rect.x-2, rect.y-2, rect.width+4, rect.height+4}, 2, BLACK);
-				}
-		}
-}
-
-char* getTool(ToolType tool) {
-    switch (tool) {
-        case TOOL_PEN: return "Pen";
-        case TOOL_ERASER: return "Eraser";
-        case TOOL_LINE: return "Line";
-        case TOOL_RECT: return "Rectangle";
-        case TOOL_CIRCLE: return "Circle";
-        default: return "Unknown";
-    }
-}
 
 int main(void) {
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Whiteboard");
@@ -50,126 +17,12 @@ int main(void) {
     state.currTool = TOOL_PEN;
 
     while (!WindowShouldClose()) {
-        Vector2 mousePos = GetMousePosition();
-        
-        // Input Handling
-
-        // Toggle Palette visibility
-        if (IsKeyPressed(KEY_TAB)) state.isPaletteVisible = !state.isPaletteVisible;
-
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-
-            bool paletteClicked = false;
-            
-            if (state.isPaletteVisible) {
-                int startX = 10;
-                int startY = WINDOW_HEIGHT - 40;
-                int boxSize = 30;
-
-                for (int i = 0; i < PALETTE_SIZE; i++) {
-                    Rectangle rect = { startX + (i * (boxSize+5)), startY, boxSize, boxSize};
-                    if (CheckCollisionPointRec(mousePos, rect)) {
-                        state.currentColor = PALETTE[i];
-                        state.currTool = TOOL_PEN;
-                        paletteClicked = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!paletteClicked) {
-                state.isMouseDown = true;
-                state.lastMousePos = mousePos;
-                state.startMousePos = mousePos;
-                
-                // Draw initial point for Pen/Eraser
-                if (state.currTool == TOOL_PEN || state.currTool == TOOL_ERASER) {
-                        // Determine color
-                        bool modeEraser = state.currTool == TOOL_ERASER || IsKeyDown(KEY_LEFT_SHIFT);
-                        Color colorToUse = modeEraser ? RAYWHITE : state.currentColor;
-                        DrawLineToBuffer(&state, (int)mousePos.x, (int)mousePos.y, (int)mousePos.x, (int)mousePos.y, colorToUse);
-                }
-            }
-
-        } else if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
-            state.isMouseDown = false;
-
-            // Commit Shapes on Release
-            if (state.currTool == TOOL_RECT) {
-                DrawRectToBuffer(&state, 
-                    (int)state.startMousePos.x, (int)state.startMousePos.y, 
-                    (int)mousePos.x, (int)mousePos.y, 
-                    state.currentColor);
-                UpdateTextureFromBuffer(&state);
-            }
-            else if (state.currTool == TOOL_CIRCLE) {
-                DrawCircleToBuffer(&state, 
-                    (int)state.startMousePos.x, (int)state.startMousePos.y, 
-                    (int)mousePos.x, (int)mousePos.y, 
-                    state.currentColor);
-                UpdateTextureFromBuffer(&state);
-            }
-            else if (state.currTool == TOOL_LINE) {
-                DrawLineToBuffer(&state, 
-                    (int)state.startMousePos.x, (int)state.startMousePos.y, 
-                    (int)mousePos.x, (int)mousePos.y, 
-                    state.currentColor);
-                UpdateTextureFromBuffer(&state);
-            }
-        }
-
-        // Brush Resize Input
-        static float resizeTimer = 0.0f;
-        resizeTimer += GetFrameTime();
-
-        if (resizeTimer >= 0.15f) {
-            if (IsKeyDown(KEY_RIGHT_BRACKET)) {
-                state.brushSize += 1;
-                if(state.brushSize > 50) state.brushSize = 50;
-            }
-
-            if (IsKeyDown(KEY_LEFT_BRACKET)) {
-                state.brushSize -= 1;
-                if(state.brushSize < 2) state.brushSize = 2;
-            }
-
-            resizeTimer = 0.0f;
-        }
-        
-        // Toggle Tools
-        if (IsKeyPressed(KEY_P)) state.currTool = TOOL_PEN;
-        if (IsKeyPressed(KEY_R)) state.currTool = TOOL_RECT;
-        if (IsKeyPressed(KEY_C)) state.currTool = TOOL_CIRCLE;
-        if (IsKeyPressed(KEY_L)) state.currTool = TOOL_LINE;
-        if (IsKeyPressed(KEY_E)) state.currTool = TOOL_ERASER;
-
-        // Clear Canvas
-        if (IsKeyPressed(KEY_X)) {
-            ClearCanvas(&state, RAYWHITE);
-            UpdateTextureFromBuffer(&state);
-        }
-
-        if (state.isMouseDown) {
-            // Check for Shift override or Toggle state
-            bool modeEraser = state.currTool == TOOL_ERASER || IsKeyDown(KEY_LEFT_SHIFT);
-            if (modeEraser || state.currTool == TOOL_PEN) {
-                Color colorToUse = modeEraser ? RAYWHITE : state.currentColor;
-                DrawLineToBuffer(&state, (int)state.lastMousePos.x, (int)state.lastMousePos.y, (int)mousePos.x, (int)mousePos.y, colorToUse);
-            }
-            
-            // Note: Shapes are handled in IsMouseButtonReleased above
-
-            state.lastMousePos = mousePos;
-            UpdateTextureFromBuffer(&state);
-        }
+        HandleInput(&state);
 
         BeginDrawing();
             ClearBackground(RAYWHITE);
             DrawTexture(state.targetTexture, 0, 0, WHITE);
-            if (state.isPaletteVisible) DrawPalette(&state);
-            DrawText(TextFormat("Brush Size: %d", state.brushSize), 10, 10, 20, DARKGRAY);
-            DrawText("Hold Left Mouse to Draw", 10, 30, 20, DARKGRAY);
-            DrawText(TextFormat("Tool: %s", getTool(state.currTool)), 10, 50, 20, DARKGRAY);
+            DrawUI(&state);
         EndDrawing();
     }
 
