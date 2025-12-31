@@ -8,7 +8,7 @@
 * [ ] **Save/Load Canvas**: Add functionality to save artwork as a `.png` file(maybe into `/docx` aswell).
 * [ ] **Undo/Redo System**: Implement a stack-based history system (saving snapshots of the canvas).
 * [x] **Shape Preview**: Draw a "ghost" shape while dragging. (Implemented)
-* [ ] **Non-filled Shapes**: Support for drawing outlined rectangles and circles on the canvas.
+* [x] **Non-filled Shapes**: Support for drawing outlined rectangles and circles on the canvas.
 
 ## 2. Networking (Collaborative Mode)
 * [ ] **Server Skeleton**: Create a simple server (in C or Python) that listens for connections.
