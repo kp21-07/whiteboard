@@ -49,14 +49,20 @@ void DrawRectToBuffer(State *state, int x1, int y1, int x2, int y2, Color color)
 }
 
 void DrawCircleToBuffer(State *state, int x1, int y1, int x2, int y2, Color color) {
-    int cx = (x1 + x2) / 2;
-    int cy = (y1 + y2) / 2;
-    int radius = abs(x1 - x2) / 2;
-    int dy_radius = abs(y1 - y2) / 2;
-    if (dy_radius > radius) radius = dy_radius;
+    float cx = (x1 + x2) / 2.0f;
+    float cy = (y1 + y2) / 2.0f;
     
-    for (int i = cx - radius; i <= cx + radius; i++) {
-        for (int j = cy - radius; j <= cy + radius; j++) {
+    // Match the logic in DrawShapePreview: radius = distance / 2
+    float dist = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
+    float radius = dist / 2.0f;
+
+    int min_x = (int)(cx - radius - 1);
+    int max_x = (int)(cx + radius + 1);
+    int min_y = (int)(cy - radius - 1);
+    int max_y = (int)(cy + radius + 1);
+
+    for (int i = min_x; i <= max_x; i++) {
+        for (int j = min_y; j <= max_y; j++) {
             // Check if point is inside the circle: (x-cx)^2 + (y-cy)^2 <= r^2
             if ((i - cx)*(i - cx) + (j - cy)*(j - cy) <= radius * radius) {
                 SetPixelSafe(state, i, j, color);

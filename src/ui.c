@@ -1,5 +1,7 @@
 #include "ui.h"
 #include <string.h>
+#include <math.h>
+#include <raymath.h>
 
 #define PALETTE_SIZE 8
 static const Color PALETTE[PALETTE_SIZE] = {
@@ -62,9 +64,38 @@ bool HandlePaletteClick(Vector2 mousePos, bool isVisible, Color *pickedColor) {
     for (int i = 0; i < PALETTE_SIZE; i++) {
         Rectangle rect = { START_X + (i * (BOX_SIZE + 5)), startY, BOX_SIZE, BOX_SIZE };
         if (CheckCollisionPointRec(mousePos, rect)) {
-            *pickedColor = PALETTE[i];
+            if (pickedColor != NULL) *pickedColor = PALETTE[i];
             return true;
         }
     }
     return false;
+}
+
+void DrawShapePreview(State *state) {
+    if (!state->isMouseDown) return;
+
+    Vector2 start = state->startMousePos;
+    Vector2 curr = GetMousePosition();
+    Color previewColor = state->currentColor;
+    previewColor.a = 128; // Make it slightly transparent
+
+    switch (state->currTool) {
+        case TOOL_LINE:
+            DrawLineV(start, curr, previewColor);
+            break;
+        case TOOL_RECT:
+            int x = (int)fminf(start.x, curr.x);
+            int y = (int)fminf(start.y, curr.y);
+            int width = (int)fabsf(start.x - curr.x);
+            int height = (int)fabsf(start.y - curr.y);
+            DrawRectangleLinesEx((Rectangle){x, y, width, height}, state->brushSize, previewColor);
+            break;
+        case TOOL_CIRCLE:
+            float radius = Vector2Distance(start, curr) / 2.0f;
+            Vector2 center = { (start.x + curr.x) / 2.0f, (start.y + curr.y) / 2.0f };
+            DrawCircleLines((int)center.x, (int)center.y, radius, previewColor);
+            break;
+        default:
+            break;
+    }
 }

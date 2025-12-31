@@ -22,6 +22,7 @@ int main(void) {
         BeginDrawing();
             ClearBackground(RAYWHITE);
             DrawTexture(state.targetTexture, 0, 0, WHITE);
+            DrawShapePreview(&state);
             DrawUI(&state);
         EndDrawing();
     }

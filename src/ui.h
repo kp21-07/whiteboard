@@ -6,6 +6,9 @@
 // Draws all UI elements (palette, text, status)
 void DrawUI(State *state);
 
+// Draws the Shape Preview when dragging for a specific shape tool
+void DrawShapePreview(State *state);
+
 // Checks if the mouse clicked on a palette color.
 // Returns true if clicked, and updates *pickedColor.
 bool HandlePaletteClick(Vector2 mousePos, bool isVisible, Color *pickedColor);

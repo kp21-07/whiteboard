@@ -2,6 +2,7 @@
 #include "drawing.h"
 #include "canvas.h"
 #include "ui.h" // For HandlePaletteClick
+#include <stddef.h>
 
 void HandleInput(State *state) {
     Vector2 mousePos = GetMousePosition();
@@ -46,7 +47,8 @@ void HandleInput(State *state) {
         Color pickedColor;
         if (HandlePaletteClick(mousePos, state->isPaletteVisible, &pickedColor)) {
             state->currentColor = pickedColor;
-            state->currTool = TOOL_PEN; // Switch to pen on color pick
+            state->currentColor = pickedColor;
+            // state->currTool = TOOL_PEN; // Removed auto-switch
             return; // Don't draw on the same click
         }
 
@@ -64,6 +66,10 @@ void HandleInput(State *state) {
 
     } else if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
         state->isMouseDown = false;
+
+        if (HandlePaletteClick(mousePos, state->isPaletteVisible, NULL)) {
+            return;
+        }
 
         // Commit Shapes on Release
         if (state->currTool == TOOL_RECT) {
