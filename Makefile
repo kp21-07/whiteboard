@@ -8,7 +8,7 @@ BUILD_DIR = build
 # List source files explicitly or use wildcard
 SRC = $(wildcard $(SRC_DIR)/*.c)
 OBJ = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SRC))
-TARGET = whiteboard
+TARGET = "build/whiteboard"
 
 all: $(BUILD_DIR) $(TARGET)
 

@@ -13,24 +13,27 @@ void DrawLineToBuffer(State *state, int x1, int y1, int x2, int y2, Color color)
     int r = (state->brushSize) / 2;
 
     while (true) {
-        // Draw brush circle at current point
-        for (int i = -r; i <= r; i++) {
-            for (int j = -r; j <= r; j++) {
-                if (i*i + j*j <= r*r) {
-                    SetPixelSafe(state, x1 + i, y1 + j, color);
-                }
-            }
-        }
+        // Draw brush circle at current point if the brush has moved by r length
+				for (int i = -r; i <= r; i++) {
+						for (int j = -r; j <= r; j++) {
+								if (i*i + j*j <= r*r) {
+										SetPixelSafe(state, x1 + i, y1 + j, color);
+								}
+						}
+				}
 
         if (x1 == x2 && y1 == y2) break;
+
         int e2 = 2 * err;
-        if (e2 > -dy) {
-            err -= dy;
+
+        if (e2 > -dy) { // Checks if the error is small enough that we can move vertically 
+            err -= dy; // Subtracts dy to pay for the movement
             x1 += sx;
         }
-        if (e2 < dx) {
-            err += dx;
-            y1 += sy;
+
+        if (e2 < dx) { // Check weather the error is accumulated enough that we cna move vertically
+            err += dx; // Adds dx to compensate for the movement
+            y1 += sy; 
         }
     }
 }

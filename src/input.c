@@ -50,7 +50,6 @@ void HandleInput(State *state) {
         Color pickedColor;
         if (HandlePaletteClick(mousePos, state->isPaletteVisible, &pickedColor)) {
             state->currentColor = pickedColor;
-            state->currentColor = pickedColor;
             // state->currTool = TOOL_PEN; // Removed auto-switch
             return; // Don't draw on the same click
         }
