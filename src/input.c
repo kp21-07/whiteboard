@@ -6,6 +6,16 @@
 
 void HandleInput(State *state) {
     Vector2 mousePos = GetMousePosition();
+		
+		// Save Image
+		if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S)) {
+				SaveToDisk(state, "whiteboard_drawing.png");
+		}
+
+		// Undo/Redo
+		if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_Z)) Undo(state);
+		if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_Y)) Redo(state);
+
 
     // Toggle isFilled
     if (IsKeyPressed(KEY_F)) state->isFilled = !state->isFilled;
@@ -41,6 +51,7 @@ void HandleInput(State *state) {
     if (IsKeyPressed(KEY_X)) {
         ClearCanvas(state, RAYWHITE);
         UpdateTextureFromBuffer(state);
+        SaveSnapshot(state);
     }
 
     // Mouse Interaction
@@ -95,6 +106,8 @@ void HandleInput(State *state) {
                 state->currentColor);
             UpdateTextureFromBuffer(state);
         }
+
+        SaveSnapshot(state);
     }
 
     // Continuous Drawing (Pen/Eraser)

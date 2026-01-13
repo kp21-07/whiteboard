@@ -13,7 +13,7 @@ void DrawLineToBuffer(State *state, int x1, int y1, int x2, int y2, Color color)
     int r = (state->brushSize) / 2;
 
     while (true) {
-        // Draw brush circle at current point if the brush has moved by r length
+        // Draw brush circle at current point 
 				for (int i = -r; i <= r; i++) {
 						for (int j = -r; j <= r; j++) {
 								if (i*i + j*j <= r*r) {

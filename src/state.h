@@ -8,6 +8,8 @@
 #define WINDOW_WIDTH 1000
 #define WINDOW_HEIGHT 600
 
+#define MAX_HISTORY 25
+
 // Tool Types
 typedef enum {
     TOOL_PEN,
@@ -39,6 +41,9 @@ typedef struct State {
     ToolType currTool;
     bool isPaletteVisible;
     bool isFilled;
+    Color *history[MAX_HISTORY];
+    int historyCount;
+    int historyIndex;
 } State;
 
 #endif
