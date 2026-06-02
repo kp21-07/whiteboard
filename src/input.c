@@ -27,7 +27,7 @@ void HandleInput(State *state) {
     static float resizeTimer = 0.0f;
     resizeTimer += GetFrameTime();
 
-    if (resizeTimer >= 0.15f) {
+    if (resizeTimer >= 0.1f) {
         if (IsKeyDown(KEY_RIGHT_BRACKET)) {
             state->brushSize += 1;
             if(state->brushSize > 50) state->brushSize = 50;

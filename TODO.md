@@ -5,8 +5,8 @@
 * [x] **Brush Size**: Adjustable size with `[` and `]`.
 
 ## 1. Essential Drawing Features
-* [ ] **Save/Load Canvas**: Add functionality to save artwork as a `.png` file(maybe into `/docx` aswell).
-* [ ] **Undo/Redo System**: Implement a stack-based history system (saving snapshots of the canvas).
+* [x] **Save/Load Canvas**: Add functionality to save artwork as a `.png` file(maybe into `/docx` aswell).
+* [x] **Undo/Redo System**: Implement a stack-based history system (saving snapshots of the canvas).
 * [x] **Shape Preview**: Draw a "ghost" shape while dragging. (Implemented)
 * [x] **Non-filled Shapes**: Support for drawing outlined rectangles and circles on the canvas.
 
